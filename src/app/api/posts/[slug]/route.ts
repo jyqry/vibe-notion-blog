@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { notionService } from "@/lib/notion";
+import { notionServerService } from "@/lib/notion-server";
 import { cacheManager } from "@/lib/cache-manager";
 
 export async function GET(
@@ -10,7 +10,7 @@ export async function GET(
     const { slug } = params;
 
     // NotionService에서 캐시 우선 로딩 처리
-    const post = await notionService.getPostBySlug(slug);
+    const post = await notionServerService.getPostBySlug(slug);
 
     if (!post) {
       return NextResponse.json({ error: "Post not found" }, { status: 404 });

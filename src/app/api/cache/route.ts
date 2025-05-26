@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { cacheManager } from "@/lib/cache-manager";
-import { notionService } from "@/lib/notion";
+import { notionServerService } from "@/lib/notion-server";
 
 // 캐시 상태 확인
 export async function GET() {
@@ -33,7 +33,7 @@ export async function POST() {
     cacheManager.invalidateCache();
 
     // 새로운 데이터 가져오기
-    const posts = await notionService.getAllPosts();
+    const posts = await notionServerService.getAllPosts();
 
     return NextResponse.json({
       status: "success",

@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
-import { notionService } from "@/lib/notion";
+import { notionServerService } from "@/lib/notion-server";
 import { cacheManager } from "@/lib/cache-manager";
 
 export async function GET() {
   try {
-    const posts = await notionService.getAllPosts();
+    const posts = await notionServerService.getAllPosts();
     const cacheStatus = cacheManager.getCacheStatus();
 
     return NextResponse.json({
