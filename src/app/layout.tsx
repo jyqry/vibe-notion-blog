@@ -3,7 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import ProgressBar from "@/components/ProgressBar";
+import ProgressBarWrapper from "@/components/ProgressBarWrapper";
 import { LoadingProvider } from "@/contexts/LoadingContext";
 import { siteConfig } from "@/config/site";
 
@@ -70,7 +70,7 @@ export default function RootLayout({
         className={`${inter.className} min-h-screen bg-background font-sans antialiased`}
       >
         <LoadingProvider>
-          <ProgressBar />
+          <ProgressBarWrapper />
           <div className="relative flex min-h-screen flex-col">
             <Header />
             <main className="flex-1">{children}</main>

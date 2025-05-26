@@ -1,14 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useLoading } from "@/contexts/LoadingContext";
 
 export default function ProgressBar() {
   const [progress, setProgress] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
   const pathname = usePathname();
-  const searchParams = useSearchParams();
   const { isLoading } = useLoading();
 
   useEffect(() => {
@@ -72,7 +71,7 @@ export default function ProgressBar() {
     }, 100);
 
     return () => clearTimeout(timer);
-  }, [pathname, searchParams, isVisible]);
+  }, [pathname, isVisible]);
 
   if (!isVisible) return null;
 
