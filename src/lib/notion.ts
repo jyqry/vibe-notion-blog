@@ -12,14 +12,22 @@ export class NotionService {
   private databaseId: string;
 
   constructor() {
-    this.databaseId = process.env.NOTION_DATABASE_ID!;
+    this.databaseId = process.env.NOTION_DATABASE_ID || "";
     if (!this.databaseId) {
-      throw new Error("NOTION_DATABASE_ID is required");
+      console.warn(
+        "NOTION_DATABASE_ID is not set. Please create .env.local file with your Notion credentials."
+      );
+      // 개발 환경에서는 빈 배열을 반환하도록 함
     }
   }
 
   async getAllPosts(): Promise<BlogPost[]> {
     try {
+      if (!this.databaseId) {
+        console.warn("No database ID configured. Returning empty posts array.");
+        return [];
+      }
+
       const response = await notion.databases.query({
         database_id: this.databaseId,
         filter: {
@@ -51,6 +59,11 @@ export class NotionService {
 
   async getPostBySlug(slug: string): Promise<BlogPost | null> {
     try {
+      if (!this.databaseId) {
+        console.warn("No database ID configured. Returning null.");
+        return null;
+      }
+
       const response = await notion.databases.query({
         database_id: this.databaseId,
         filter: {
