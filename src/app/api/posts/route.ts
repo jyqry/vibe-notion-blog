@@ -1,38 +1,31 @@
 import { NextResponse } from "next/server";
 import { notionService } from "@/lib/notion";
-import { cacheManager } from "@/lib/cache";
+import { cacheManager } from "@/lib/cache-manager";
 
 export async function GET() {
   try {
-    // 캐시에서 먼저 확인
-    const cachedPosts = cacheManager.get("all-posts");
-    if (cachedPosts) {
-      // 백그라운드에서 업데이트 확인
-      checkForUpdatesInBackground();
-      return NextResponse.json(cachedPosts);
-    }
-
-    // 캐시에 없으면 Notion에서 가져오기
     const posts = await notionService.getAllPosts();
+    const cacheStatus = cacheManager.getCacheStatus();
 
-    // 캐시에 저장
-    cacheManager.set("all-posts", posts as any);
-
-    return NextResponse.json(posts);
+    return NextResponse.json({
+      posts,
+      total: posts.length,
+      cached: cacheStatus.hasCachedPosts,
+      cacheInfo: {
+        lastUpdated: cacheStatus.lastUpdated,
+        postsCount: cacheStatus.postsCount,
+      },
+    });
   } catch (error) {
-    console.error("Error in /api/posts:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch posts" },
-      { status: 500 }
-    );
-  }
-}
+    console.error("API Error:", error);
 
-async function checkForUpdatesInBackground() {
-  try {
-    const posts = await notionService.getAllPosts();
-    cacheManager.set("all-posts", posts as any);
-  } catch (error) {
-    console.error("Background update failed:", error);
+    // 오류 발생 시 캐시된 데이터라도 반환
+    const cachedPosts = cacheManager.getCachedPosts() || [];
+    return NextResponse.json({
+      posts: cachedPosts,
+      total: cachedPosts.length,
+      cached: true,
+      error: "Failed to fetch fresh data, returning cached data",
+    });
   }
 }
