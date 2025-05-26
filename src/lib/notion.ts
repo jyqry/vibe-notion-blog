@@ -40,20 +40,23 @@ export class NotionService {
       console.log("Has Published property:", hasPublished);
       console.log("Has Created property:", hasCreated);
 
-      // 쿼리 옵션 구성
+      // Published 속성이 없으면 오류 발생
+      if (!hasPublished) {
+        throw new Error(
+          "Published property is required in the Notion database. Please add a 'Published' checkbox property to your database."
+        );
+      }
+
+      // 쿼리 옵션 구성 - Published가 체크된 포스트만 가져오기
       const queryOptions: any = {
         database_id: this.databaseId,
-      };
-
-      // Published 속성이 있으면 필터 추가
-      if (hasPublished) {
-        queryOptions.filter = {
+        filter: {
           property: "Published",
           checkbox: {
             equals: true,
           },
-        };
-      }
+        },
+      };
 
       // Created 속성이 있으면 정렬 추가
       if (hasCreated) {
@@ -100,29 +103,32 @@ export class NotionService {
         return null;
       }
 
-      // 필터 구성
-      const filters: any[] = [
-        {
-          property: "Slug",
-          rich_text: {
-            equals: slug,
-          },
-        },
-      ];
-
-      // Published 속성이 있으면 필터에 추가
-      if (hasPublished) {
-        filters.push({
-          property: "Published",
-          checkbox: {
-            equals: true,
-          },
-        });
+      // Published 속성이 없으면 오류 발생
+      if (!hasPublished) {
+        throw new Error(
+          "Published property is required in the Notion database. Please add a 'Published' checkbox property to your database."
+        );
       }
 
+      // 필터 구성 - Slug와 Published 모두 확인
       const response = await notion.databases.query({
         database_id: this.databaseId,
-        filter: filters.length > 1 ? { and: filters } : filters[0],
+        filter: {
+          and: [
+            {
+              property: "Slug",
+              rich_text: {
+                equals: slug,
+              },
+            },
+            {
+              property: "Published",
+              checkbox: {
+                equals: true,
+              },
+            },
+          ],
+        },
       });
 
       if (response.results.length === 0) {
@@ -153,8 +159,18 @@ export class NotionService {
       const properties = page.properties;
 
       // 필수 속성 확인
-      if (!properties.Title || !properties.Slug) {
-        console.warn("Page missing required properties:", page.id);
+      if (!properties.Title || !properties.Slug || !properties.Published) {
+        console.warn(
+          "Page missing required properties (Title, Slug, Published):",
+          page.id
+        );
+        return null;
+      }
+
+      // Published가 체크되지 않은 포스트는 제외
+      const published = this.getPropertyValue(properties.Published);
+      if (!published) {
+        console.warn("Post is not published:", page.id);
         return null;
       }
 
