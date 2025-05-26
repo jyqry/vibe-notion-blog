@@ -28,21 +28,44 @@ export class NotionService {
         return [];
       }
 
-      const response = await notion.databases.query({
+      // 데이터베이스 스키마 확인
+      const database = await notion.databases.retrieve({
         database_id: this.databaseId,
-        filter: {
+      });
+      const properties = (database as any).properties;
+      const hasPublished = "Published" in properties;
+      const hasCreated = "Created" in properties;
+
+      console.log("Available properties:", Object.keys(properties));
+      console.log("Has Published property:", hasPublished);
+      console.log("Has Created property:", hasCreated);
+
+      // 쿼리 옵션 구성
+      const queryOptions: any = {
+        database_id: this.databaseId,
+      };
+
+      // Published 속성이 있으면 필터 추가
+      if (hasPublished) {
+        queryOptions.filter = {
           property: "Published",
           checkbox: {
             equals: true,
           },
-        },
-        sorts: [
+        };
+      }
+
+      // Created 속성이 있으면 정렬 추가
+      if (hasCreated) {
+        queryOptions.sorts = [
           {
             property: "Created",
             direction: "descending",
           },
-        ],
-      });
+        ];
+      }
+
+      const response = await notion.databases.query(queryOptions);
 
       const posts = await Promise.all(
         response.results.map(async (page: any) => {
@@ -64,24 +87,42 @@ export class NotionService {
         return null;
       }
 
+      // 데이터베이스 스키마 확인
+      const database = await notion.databases.retrieve({
+        database_id: this.databaseId,
+      });
+      const properties = (database as any).properties;
+      const hasPublished = "Published" in properties;
+      const hasSlug = "Slug" in properties;
+
+      if (!hasSlug) {
+        console.error("Database does not have 'Slug' property");
+        return null;
+      }
+
+      // 필터 구성
+      const filters: any[] = [
+        {
+          property: "Slug",
+          rich_text: {
+            equals: slug,
+          },
+        },
+      ];
+
+      // Published 속성이 있으면 필터에 추가
+      if (hasPublished) {
+        filters.push({
+          property: "Published",
+          checkbox: {
+            equals: true,
+          },
+        });
+      }
+
       const response = await notion.databases.query({
         database_id: this.databaseId,
-        filter: {
-          and: [
-            {
-              property: "Slug",
-              rich_text: {
-                equals: slug,
-              },
-            },
-            {
-              property: "Published",
-              checkbox: {
-                equals: true,
-              },
-            },
-          ],
-        },
+        filter: filters.length > 1 ? { and: filters } : filters[0],
       });
 
       if (response.results.length === 0) {
