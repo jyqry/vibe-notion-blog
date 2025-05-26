@@ -101,3 +101,29 @@ export async function getCacheStatus() {
     throw error;
   }
 }
+
+// 환경 변수 상태 확인
+export function useEnvStatus() {
+  const { data, error, mutate } = useSWR("/api/env-status", fetcher, {
+    revalidateOnFocus: false,
+    revalidateOnReconnect: false,
+    refreshInterval: 0, // 수동으로만 새로고침
+  });
+
+  return {
+    envStatus: data,
+    isLoading: !error && !data,
+    isError: error,
+    mutate,
+  };
+}
+
+export async function getEnvStatus() {
+  try {
+    const response = await fetch("/api/env-status");
+    return await response.json();
+  } catch (error) {
+    console.error("환경 변수 상태 확인 오류:", error);
+    throw error;
+  }
+}

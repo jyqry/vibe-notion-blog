@@ -2,9 +2,10 @@ import { Client } from "@notionhq/client";
 import { NotionToMarkdown } from "notion-to-md";
 import { NotionPage, BlogPost } from "@/types/notion";
 import { cacheManager } from "./cache-manager";
+import { serverEnv } from "./env-server";
 
 const notion = new Client({
-  auth: process.env.NOTION_TOKEN,
+  auth: serverEnv.notionToken,
 });
 
 const n2m = new NotionToMarkdown({ notionClient: notion });
@@ -13,7 +14,7 @@ export class NotionServerService {
   private databaseId: string;
 
   constructor() {
-    this.databaseId = process.env.NOTION_DATABASE_ID || "";
+    this.databaseId = serverEnv.notionDatabaseId;
     if (!this.databaseId) {
       console.warn(
         "NOTION_DATABASE_ID is not set. Please create .env.local file with your Notion credentials."

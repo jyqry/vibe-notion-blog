@@ -9,7 +9,7 @@ export async function GET(
   try {
     const { slug } = params;
 
-    // NotionService에서 캐시 우선 로딩 처리
+    // NotionServerService에서 캐시 우선 로딩 처리
     const post = await notionServerService.getPostBySlug(slug);
 
     if (!post) {
