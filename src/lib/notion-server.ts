@@ -25,21 +25,28 @@ export class NotionServerService {
   async getAllPosts(): Promise<BlogPost[]> {
     try {
       if (!this.databaseId) {
-        console.warn(
-          "No database ID configured. Returning cached posts if available."
-        );
-        return cacheManager.getCachedPosts() || [];
+        console.warn("No database ID configured. Returning empty array.");
+        return [];
       }
 
-      // 1. 먼저 캐시된 데이터 반환 (즉시 응답)
+      // Vercel 환경에서는 캐시가 요청 간에 유지되지 않으므로 직접 데이터 가져오기
+      const isVercel =
+        process.env.VERCEL === "1" || process.env.NODE_ENV === "production";
+
+      if (isVercel) {
+        console.log("Vercel 환경: Notion에서 직접 데이터 가져오는 중...");
+        return await this.fetchPostsFromNotion();
+      }
+
+      // 로컬 환경에서는 기존 캐시 로직 사용
       const cachedPosts = cacheManager.getCachedPosts();
 
-      // 2. 백그라운드에서 업데이트 확인 및 캐시 갱신
+      // 백그라운드에서 업데이트 확인 및 캐시 갱신
       this.checkAndUpdateCache().catch((error) => {
         console.error("백그라운드 캐시 업데이트 오류:", error);
       });
 
-      // 3. 캐시가 있으면 즉시 반환, 없으면 실시간 데이터 가져오기
+      // 캐시가 있으면 즉시 반환, 없으면 실시간 데이터 가져오기
       if (cachedPosts && cachedPosts.length > 0) {
         console.log(`캐시에서 ${cachedPosts.length}개 포스트 반환 (즉시 응답)`);
         return cachedPosts;
@@ -50,14 +57,25 @@ export class NotionServerService {
       return await this.fetchPostsFromNotion();
     } catch (error) {
       console.error("Error in getAllPosts:", error);
-      // 오류 발생 시 캐시된 데이터라도 반환
-      return cacheManager.getCachedPosts() || [];
+      // 오류 발생 시 빈 배열 반환
+      return [];
     }
   }
 
   async getPostBySlug(slug: string): Promise<BlogPost | null> {
     try {
-      // 1. 먼저 캐시에서 찾기 (즉시 응답)
+      const isVercel =
+        process.env.VERCEL === "1" || process.env.NODE_ENV === "production";
+
+      if (isVercel) {
+        // Vercel 환경에서는 직접 Notion에서 가져오기
+        console.log(
+          `Vercel 환경: 포스트 "${slug}" Notion에서 직접 가져오는 중...`
+        );
+        return await this.fetchPostBySlugFromNotion(slug);
+      }
+
+      // 로컬 환경에서는 캐시 우선 로직 사용
       const cachedPost = cacheManager.getCachedPost(slug);
 
       if (cachedPost) {
@@ -71,7 +89,7 @@ export class NotionServerService {
         return cachedPost;
       }
 
-      // 2. 캐시에 없으면 실시간으로 가져오기
+      // 캐시에 없으면 실시간으로 가져오기
       console.log(`캐시에 없는 포스트 "${slug}", Notion에서 가져오는 중...`);
       return await this.fetchPostBySlugFromNotion(slug);
     } catch (error) {

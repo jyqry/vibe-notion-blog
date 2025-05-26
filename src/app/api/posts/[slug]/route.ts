@@ -2,14 +2,19 @@ import { NextResponse } from "next/server";
 import { notionServerService } from "@/lib/notion-server";
 import { cacheManager } from "@/lib/cache-manager";
 
+// Vercel 환경에서 5분간 캐시
+export const revalidate = 300;
+
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
     const { slug } = await params;
+    const isVercel =
+      process.env.VERCEL === "1" || process.env.NODE_ENV === "production";
 
-    // NotionServerService에서 캐시 우선 로딩 처리
+    // NotionServerService에서 포스트 가져오기
     const post = await notionServerService.getPostBySlug(slug);
 
     if (!post) {
@@ -18,26 +23,26 @@ export async function GET(
 
     const cacheStatus = cacheManager.getCacheStatus();
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       ...post,
-      cached: cacheStatus.hasCachedPosts,
+      cached: isVercel ? false : cacheStatus.hasCachedPosts,
+      environment: cacheStatus.environment || (isVercel ? "vercel" : "local"),
       cacheInfo: {
-        lastUpdated: cacheStatus.lastUpdated,
+        lastUpdated: cacheStatus.lastUpdated || new Date().toISOString(),
       },
     });
+
+    // Vercel 환경에서 추가 캐시 헤더 설정
+    if (isVercel) {
+      response.headers.set(
+        "Cache-Control",
+        "s-maxage=300, stale-while-revalidate=600"
+      );
+    }
+
+    return response;
   } catch (error) {
     console.error("Error in /api/posts/[slug]:", error);
-
-    // 오류 발생 시 캐시된 데이터라도 반환
-    const { slug: errorSlug } = await params;
-    const cachedPost = cacheManager.getCachedPost(errorSlug);
-    if (cachedPost) {
-      return NextResponse.json({
-        ...cachedPost,
-        cached: true,
-        error: "Failed to fetch fresh data, returning cached data",
-      });
-    }
 
     return NextResponse.json(
       { error: "Failed to fetch post" },
