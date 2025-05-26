@@ -4,10 +4,10 @@ import { cacheManager } from "@/lib/cache-manager";
 
 export async function GET(
   request: Request,
-  { params }: { params: { slug: string } }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
-    const { slug } = params;
+    const { slug } = await params;
 
     // NotionServerService에서 캐시 우선 로딩 처리
     const post = await notionServerService.getPostBySlug(slug);
@@ -29,7 +29,8 @@ export async function GET(
     console.error("Error in /api/posts/[slug]:", error);
 
     // 오류 발생 시 캐시된 데이터라도 반환
-    const cachedPost = cacheManager.getCachedPost(params.slug);
+    const { slug: errorSlug } = await params;
+    const cachedPost = cacheManager.getCachedPost(errorSlug);
     if (cachedPost) {
       return NextResponse.json({
         ...cachedPost,
