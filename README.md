@@ -71,11 +71,40 @@ npm install
 - 위 속성들을 하나씩 추가 (속성명과 타입을 정확히 맞춰주세요)
 - 테스트용 포스트를 하나 만들어서 확인해보세요
 
-#### 3.3 데이터베이스 권한 설정
+#### 3.3 데이터베이스 권한 설정 (중요!)
 
-1. 생성한 데이터베이스 페이지에서 "Share" 클릭
-2. "Invite" 섹션에서 생성한 Integration 선택
-3. "Invite" 클릭
+Integration이 데이터베이스에 접근할 수 있도록 권한을 부여해야 합니다:
+
+**단계 1: 데이터베이스 페이지에서 메뉴 열기**
+
+1. 생성한 블로그 데이터베이스 페이지를 엽니다
+2. 페이지 우상단의 **"..." (더보기)** 버튼을 클릭합니다
+
+**단계 2: Connections 메뉴 접근**
+
+1. 드롭다운 메뉴에서 **"Connections"** 또는 **"연결"**을 클릭합니다
+2. "Add connections" 또는 "연결 추가" 버튼을 클릭합니다
+
+**단계 3: Integration 선택**
+
+1. 사용 가능한 Integration 목록에서 생성한 Integration을 찾습니다
+2. Integration 이름 옆의 **"Connect"** 또는 **"연결"** 버튼을 클릭합니다
+
+**단계 4: 권한 확인**
+
+- Integration이 성공적으로 연결되면 "Connected" 상태로 표시됩니다
+- 이제 해당 Integration이 데이터베이스에 접근할 수 있습니다
+
+**💡 Integration을 찾을 수 없는 경우:**
+
+- [Notion Developers](https://www.notion.so/my-integrations)에서 Integration이 제대로 생성되었는지 확인
+- 같은 워크스페이스에서 Integration을 생성했는지 확인
+- Integration이 "Active" 상태인지 확인
+
+**⚠️ 주의사항:**
+
+- Integration을 연결하지 않으면 API 호출 시 "object not found" 오류가 발생합니다
+- 각 데이터베이스마다 개별적으로 Integration을 연결해야 합니다
 
 #### 3.4 데이터베이스 ID 복사
 
