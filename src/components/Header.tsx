@@ -12,8 +12,15 @@ export default function Header() {
 
   const handleNavigation = (href: string, name: string) => {
     if (pathname !== href) {
-      setLoadingMessage(`${name} 페이지로 이동 중...`);
-      setIsLoading(true);
+      // 데이터 페칭이 필요한 페이지들만 로딩 상태 설정
+      const needsLoading =
+        href === "/" || href === "/blog" || href.startsWith("/blog/");
+
+      if (needsLoading) {
+        setLoadingMessage(`${name} 페이지로 이동 중...`);
+        setIsLoading(true);
+      }
+
       router.push(href);
     }
   };

@@ -1,6 +1,16 @@
+"use client";
+
+import { useEffect } from "react";
+import { useLoading } from "@/contexts/LoadingContext";
 import { siteConfig } from "@/config/site";
 
 export default function AboutPage() {
+  const { setIsLoading } = useLoading();
+
+  // 페이지 로드 시 로딩 상태 해제
+  useEffect(() => {
+    setIsLoading(false);
+  }, [setIsLoading]);
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
       <div className="prose prose-lg max-w-none">

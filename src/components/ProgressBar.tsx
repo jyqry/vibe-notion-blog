@@ -58,20 +58,20 @@ export default function ProgressBar() {
     };
   }, [isLoading, isVisible]);
 
-  // 페이지 변경 감지 (추가 트리거)
+  // 페이지 변경 완료 시 로딩 상태 자동 해제
   useEffect(() => {
-    const timer = setTimeout(() => {
-      if (isVisible) {
+    if (!isLoading && isVisible) {
+      const timer = setTimeout(() => {
         setProgress(100);
         setTimeout(() => {
           setIsVisible(false);
           setProgress(0);
         }, 200);
-      }
-    }, 100);
+      }, 100);
 
-    return () => clearTimeout(timer);
-  }, [pathname, isVisible]);
+      return () => clearTimeout(timer);
+    }
+  }, [pathname, isLoading, isVisible]);
 
   if (!isVisible) return null;
 
