@@ -2,6 +2,7 @@
 
 import { usePosts } from "@/lib/hooks";
 import PostCard from "@/components/PostCard";
+import PostCardSkeleton from "@/components/PostCardSkeleton";
 import { siteConfig } from "@/config/site";
 
 export default function HomePage() {
@@ -10,9 +11,29 @@ export default function HomePage() {
   if (isLoading) {
     return (
       <div className="container mx-auto px-4 py-8">
-        <div className="flex items-center justify-center min-h-[400px]">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
-        </div>
+        {/* 히어로 섹션 */}
+        <section className="text-center py-12 mb-12">
+          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
+            {siteConfig.name}
+          </h1>
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            {siteConfig.description}
+          </p>
+        </section>
+
+        {/* 최신 포스트 스켈레톤 */}
+        <section>
+          <div className="flex items-center justify-between mb-8">
+            <h2 className="text-3xl font-bold text-gray-900">최신 포스트</h2>
+            <div className="h-6 bg-gray-200 rounded w-32 animate-pulse" />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {Array.from({ length: 6 }).map((_, index) => (
+              <PostCardSkeleton key={index} />
+            ))}
+          </div>
+        </section>
       </div>
     );
   }
