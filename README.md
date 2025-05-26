@@ -27,16 +27,16 @@ Notion을 기반으로 한 개인 블로그 웹사이트입니다. Next.js 15와
 
 ### 1. 프로젝트 클론
 
-\`\`\`bash
+```bash
 git clone <repository-url>
 cd vibe-notion-blog
-\`\`\`
+```
 
 ### 2. 의존성 설치
 
-\`\`\`bash
+```bash
 npm install
-\`\`\`
+```
 
 ### 3. Notion 설정
 
@@ -80,15 +80,16 @@ npm install
 #### 3.4 데이터베이스 ID 복사
 
 데이터베이스 URL에서 ID를 복사하세요:
-\`\`\`
+
+```
 https://www.notion.so/your-workspace/DATABASE_ID?v=...
-\`\`\`
+```
 
 ### 4. 환경 변수 설정
 
-프로젝트 루트에 \`.env.local\` 파일을 생성하고 다음 내용을 추가하세요:
+프로젝트 루트에 `.env.local` 파일을 생성하고 다음 내용을 추가하세요:
 
-\`\`\`env
+```env
 
 # ===========================================
 
@@ -148,34 +149,34 @@ NEXT_PUBLIC_SITE_URL=http://localhost:3000
 
 # NEXT_PUBLIC_VERCEL_ANALYTICS=true
 
-\`\`\`
+```
 
 ### 5. 사이트 설정 커스터마이징
 
-\`src/config/site.ts\` 파일을 수정하여 사이트 정보를 변경하세요:
+`src/config/site.ts` 파일을 수정하여 사이트 정보를 변경하세요:
 
-\`\`\`typescript
+```typescript
 export const siteConfig = {
-name: "Your Blog Name",
-description: "Your blog description",
-author: {
-name: "Your Name",
-email: "your.email@example.com",
-twitter: "@yourusername",
-},
-links: {
-twitter: "https://twitter.com/yourusername",
-github: "https://github.com/yourusername",
-},
-// ... 기타 설정
-}
-\`\`\`
+  name: "Your Blog Name",
+  description: "Your blog description",
+  author: {
+    name: "Your Name",
+    email: "your.email@example.com",
+    twitter: "@yourusername",
+  },
+  links: {
+    twitter: "https://twitter.com/yourusername",
+    github: "https://github.com/yourusername",
+  },
+  // ... 기타 설정
+};
+```
 
 ### 6. 개발 서버 실행
 
-\`\`\`bash
+```bash
 npm run dev
-\`\`\`
+```
 
 브라우저에서 [http://localhost:3000](http://localhost:3000)을 열어 확인하세요.
 
@@ -185,9 +186,9 @@ npm run dev
 
 1. [Vercel](https://vercel.com)에 프로젝트 연결
 2. 환경 변수 설정:
-   - \`NOTION_TOKEN\`
-   - \`NOTION_DATABASE_ID\`
-   - \`NEXT_PUBLIC_SITE_URL\` (배포된 도메인)
+   - `NOTION_TOKEN`
+   - `NOTION_DATABASE_ID`
+   - `NEXT_PUBLIC_SITE_URL` (배포된 도메인)
 3. 배포 완료
 
 ## 사용법
@@ -211,7 +212,7 @@ npm run dev
 
 ## 프로젝트 구조
 
-\`\`\`
+```
 src/
 ├── app/ # Next.js App Router 페이지
 │ ├── api/ # API 라우트
@@ -221,21 +222,21 @@ src/
 ├── config/ # 사이트 설정
 ├── lib/ # 유틸리티 함수
 └── types/ # TypeScript 타입 정의
-\`\`\`
+```
 
 ## 커스터마이징
 
 ### 스타일링
 
-- \`src/app/globals.css\`: 글로벌 스타일
-- \`tailwind.config.js\`: Tailwind 설정
+- `src/app/globals.css`: 글로벌 스타일
+- `tailwind.config.js`: Tailwind 설정
 - 컴포넌트별 스타일은 Tailwind 클래스 사용
 
 ### 기능 추가
 
-- \`src/config/site.ts\`: 사이트 설정 수정
-- \`src/components/\`: 새 컴포넌트 추가
-- \`src/lib/\`: 유틸리티 함수 추가
+- `src/config/site.ts`: 사이트 설정 수정
+- `src/components/`: 새 컴포넌트 추가
+- `src/lib/`: 유틸리티 함수 추가
 
 ## 환경 변수 설정 가이드
 
@@ -265,9 +266,9 @@ src/
 
 터미널에서 다음 명령어로 환경 변수가 제대로 로드되는지 확인:
 
-\`\`\`bash
+```bash
 npm run dev
-\`\`\`
+```
 
 콘솔에 "NOTION_DATABASE_ID is not set" 경고가 나타나지 않으면 성공!
 
