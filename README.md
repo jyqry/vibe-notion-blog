@@ -52,18 +52,24 @@ npm install
 
 블로그 포스트를 위한 Notion 데이터베이스를 다음 속성으로 생성하세요:
 
-| 속성명        | 타입         | 설명                    |
-| ------------- | ------------ | ----------------------- |
-| **Title**     | Title        | 포스트 제목 (필수)      |
-| **Slug**      | Rich Text    | URL 슬러그 (필수)       |
-| **Published** | Checkbox     | 게시 여부 (필수)        |
-| **Created**   | Date         | 생성일                  |
-| **Updated**   | Date         | 수정일                  |
-| **Excerpt**   | Rich Text    | 요약 (선택)             |
-| **Tags**      | Multi-select | 태그 (선택)             |
-| **Author**    | Rich Text    | 작성자 (선택)           |
-| **Category**  | Select       | 카테고리 (선택)         |
-| **Featured**  | Checkbox     | 추천 포스트 여부 (선택) |
+| 속성명        | 타입         | 필수 여부 | 설명                             |
+| ------------- | ------------ | --------- | -------------------------------- |
+| **Title**     | Title        | ✅ 필수   | 포스트 제목                      |
+| **Slug**      | Rich Text    | ✅ 필수   | URL 슬러그 (예: "my-first-post") |
+| **Published** | Checkbox     | ✅ 필수   | 게시 여부 (체크하면 공개)        |
+| **Created**   | Date         | 🔶 권장   | 생성일 (자동 설정 가능)          |
+| **Updated**   | Date         | 🔶 권장   | 수정일 (자동 설정 가능)          |
+| **Excerpt**   | Rich Text    | ⚪ 선택   | 포스트 요약 (미리보기용)         |
+| **Tags**      | Multi-select | ⚪ 선택   | 태그 (카테고리 분류용)           |
+| **Author**    | Rich Text    | ⚪ 선택   | 작성자명                         |
+| **Category**  | Select       | ⚪ 선택   | 카테고리 (단일 선택)             |
+| **Featured**  | Checkbox     | ⚪ 선택   | 추천 포스트 여부                 |
+
+**💡 데이터베이스 생성 팁:**
+
+- Notion에서 "Table" 템플릿으로 새 페이지 생성
+- 위 속성들을 하나씩 추가 (속성명과 타입을 정확히 맞춰주세요)
+- 테스트용 포스트를 하나 만들어서 확인해보세요
 
 #### 3.3 데이터베이스 권한 설정
 
@@ -84,14 +90,64 @@ https://www.notion.so/your-workspace/DATABASE_ID?v=...
 
 \`\`\`env
 
-# Notion API 설정
+# ===========================================
 
-NOTION_TOKEN=your_notion_integration_token_here
-NOTION_DATABASE_ID=your_notion_database_id_here
+# Vibe Notion Blog - 환경 변수 설정
+
+# ===========================================
+
+# ===========================================
+
+# Notion API 설정 (필수)
+
+# ===========================================
+
+# Notion Integration Token
+
+# 1. https://www.notion.so/my-integrations 에서 새 Integration 생성
+
+# 2. "Internal Integration Token" 복사하여 아래에 붙여넣기
+
+NOTION_TOKEN=secret_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+# Notion Database ID
+
+# 1. 블로그용 Notion 데이터베이스 생성
+
+# 2. 데이터베이스 URL에서 ID 부분 복사
+
+# 예시: https://www.notion.so/workspace/DATABASE_ID?v=...
+
+NOTION_DATABASE_ID=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+# ===========================================
 
 # 사이트 설정
 
+# ===========================================
+
+# 사이트 URL (개발 환경)
+
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
+
+# 사이트 URL (프로덕션 환경 - Vercel 배포 시)
+
+# NEXT_PUBLIC_SITE_URL=https://your-blog-domain.vercel.app
+
+# ===========================================
+
+# 선택적 설정 (필요시 추가)
+
+# ===========================================
+
+# Google Analytics ID (선택사항)
+
+# NEXT_PUBLIC_GA_ID=G-XXXXXXXXXX
+
+# Vercel Analytics (선택사항)
+
+# NEXT_PUBLIC_VERCEL_ANALYTICS=true
+
 \`\`\`
 
 ### 5. 사이트 설정 커스터마이징
@@ -181,6 +237,40 @@ src/
 - \`src/components/\`: 새 컴포넌트 추가
 - \`src/lib/\`: 유틸리티 함수 추가
 
+## 환경 변수 설정 가이드
+
+### .env.local 파일 생성 방법
+
+1. **프로젝트 루트 디렉토리**에 `.env.local` 파일을 생성하세요
+2. 위의 환경 변수 예시를 복사하여 붙여넣기
+3. `your_notion_integration_token_here`와 `your_notion_database_id_here`를 실제 값으로 변경
+
+### 환경 변수 값 찾는 방법
+
+#### NOTION_TOKEN 찾기:
+
+1. [Notion Developers](https://www.notion.so/my-integrations) 접속
+2. 생성한 Integration 클릭
+3. "Internal Integration Token" 복사
+4. `secret_`로 시작하는 긴 문자열입니다
+
+#### NOTION_DATABASE_ID 찾기:
+
+1. Notion에서 생성한 데이터베이스 페이지 열기
+2. 브라우저 주소창의 URL 확인
+3. URL 형태: `https://www.notion.so/workspace/DATABASE_ID?v=...`
+4. `DATABASE_ID` 부분을 복사 (32자리 문자열)
+
+### 환경 변수 확인 방법
+
+터미널에서 다음 명령어로 환경 변수가 제대로 로드되는지 확인:
+
+\`\`\`bash
+npm run dev
+\`\`\`
+
+콘솔에 "NOTION_DATABASE_ID is not set" 경고가 나타나지 않으면 성공!
+
 ## 문제 해결
 
 ### 일반적인 문제
@@ -188,6 +278,8 @@ src/
 1. **Notion API 오류**: Integration 토큰과 데이터베이스 권한 확인
 2. **빌드 오류**: 환경 변수 설정 확인
 3. **스타일 문제**: Tailwind CSS 설정 확인
+4. **환경 변수 인식 안됨**: `.env.local` 파일 위치와 이름 확인
+5. **데이터베이스 연결 실패**: Database ID와 Integration 권한 확인
 
 ### 디버깅
 
