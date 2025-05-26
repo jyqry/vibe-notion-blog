@@ -1,13 +1,19 @@
-import Link from "next/link";
+"use client";
+
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { BlogPost } from "@/types/notion";
 import { siteConfig } from "@/config/site";
+import { useLoading } from "@/contexts/LoadingContext";
 
 interface PostCardProps {
   post: BlogPost;
 }
 
 export default function PostCard({ post }: PostCardProps) {
+  const router = useRouter();
+  const { setIsLoading, setLoadingMessage } = useLoading();
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("ko-KR", {
       year: "numeric",
@@ -16,9 +22,15 @@ export default function PostCard({ post }: PostCardProps) {
     });
   };
 
+  const handleClick = () => {
+    setLoadingMessage("포스트를 불러오는 중...");
+    setIsLoading(true);
+    router.push(`/blog/${post.slug}`);
+  };
+
   return (
-    <article className="group relative bg-white rounded-lg border shadow-sm hover:shadow-md transition-shadow duration-200">
-      <Link href={`/blog/${post.slug}`}>
+    <article className="group relative bg-white rounded-lg border shadow-sm hover:shadow-md transition-shadow duration-200 cursor-pointer">
+      <div onClick={handleClick}>
         {/* 커버 이미지 */}
         {post.coverImage && (
           <div className="aspect-video relative overflow-hidden rounded-t-lg">
@@ -71,7 +83,7 @@ export default function PostCard({ post }: PostCardProps) {
             {post.author && <span className="font-medium">{post.author}</span>}
           </div>
         </div>
-      </Link>
+      </div>
     </article>
   );
 }

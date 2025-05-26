@@ -12,12 +12,17 @@ export default function Header() {
 
   const handleNavigation = (href: string, name: string) => {
     if (pathname !== href) {
-      // 데이터 페칭이 필요한 페이지들만 로딩 상태 설정
+      // 데이터 페칭이 필요한 페이지들은 로딩 상태 설정
       const needsLoading =
         href === "/" || href === "/blog" || href.startsWith("/blog/");
 
       if (needsLoading) {
-        setLoadingMessage(`${name} 페이지로 이동 중...`);
+        // 포스트 페이지의 경우 더 구체적인 메시지
+        if (href.startsWith("/blog/") && href !== "/blog") {
+          setLoadingMessage("포스트를 불러오는 중...");
+        } else {
+          setLoadingMessage(`${name} 페이지로 이동 중...`);
+        }
         setIsLoading(true);
       }
 
